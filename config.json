@@ -1,9 +1,9 @@
 {
     "prefix": "$",
-    "token": "NjY0OTUxMzM0Mzk4NTkwOTc5.Xhelgg.TAlgBFbQWXrjmufvGgrYJXtN7Bw",
+    "token": "your Discord bot token here",
     "google": {
         "translate": {
-            "apiKey": "AIzaSyD_7UChvhx7KXCX70M4OSpIL-KEpSP6rT8"
+            "apiKey": "your Google Translate API key here"
         }
     }
 }

@@ -1,35 +1,34 @@
 {
-  "name": "gotbot",
-  "version": "0.1.0",
-  "description": "Discord bot for Game of Thrones Winter Is Coming game.",
-  "main": "index.js",
-  "scripts": {
-    "test": "ping"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eugenebednik/discord-bot.git"
-  },
-  "keywords": [
-    "bot",
-    "game",
-    "of",
-    "thrones",
-    "discord",
-    "game",
-    "browser"
-  ],
-  "author": "Eugene Bednik",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/eugenebednik/discord-bot/issues"
-  },
-  "homepage": "https://github.com/eugenebednik/discord-bot#readme",
-  "dependencies": {
-    "@google-cloud/translate": "^5.1.4",
-    "country-emoji": "^1.5.0",
-    "discord.js": "^11.5.1",
-    "eslint": "^6.8.0",
-    "google-translate": "^3.0.0"
-  }
+    "name": "gotbot",
+    "version": "0.1.0",
+    "description": "Discord bot for Game of Thrones Winter Is Coming game.",
+    "main": "index.js",
+    "scripts": {
+        "test": "ping"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eugenebednik/discord-bot.git"
+    },
+    "keywords": [
+        "bot",
+        "game",
+        "of",
+        "thrones",
+        "discord",
+        "game",
+        "browser"
+    ],
+    "author": "Eugene Bednik & Victoria Bogdanova",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/eugenebednik/discord-bot/issues"
+    },
+    "homepage": "https://github.com/eugenebednik/discord-bot#readme",
+    "dependencies": {
+        "country-emoji": "^1.5.0",
+        "discord.js": "^11.5.1",
+        "eslint": "^6.8.0",
+        "google-translate": "^3.0.0"
+    }
 }

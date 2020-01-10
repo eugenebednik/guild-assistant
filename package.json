@@ -1,10 +1,12 @@
 {
-    "name": "gotbot",
+    "name": "guild-assistant",
     "version": "0.1.0",
-    "description": "Discord bot for Game of Thrones Winter Is Coming game.",
+    "description": "A Discord bot with a variety of functions aimed at easing your daily grind.",
     "main": "index.js",
     "scripts": {
-        "test": "ping"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node .",
+        "lint": "eslint ."
     },
     "repository": {
         "type": "git",
@@ -13,14 +15,14 @@
     "keywords": [
         "bot",
         "game",
-        "of",
-        "thrones",
+        "mmo",
+        "guild",
         "discord",
-        "game",
-        "browser"
+        "translation",
+        "i18n"
     ],
     "author": "Eugene Bednik & Victoria Bogdanova",
-    "license": "ISC",
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/eugenebednik/discord-bot/issues"
     },

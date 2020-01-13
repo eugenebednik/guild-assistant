@@ -154,7 +154,7 @@ client.on('message', message => {
                             sql = `REPLACE INTO \`guild_gmt_offsets\` (offset, guild_id) VALUES ('${offsetTz.toUpperCase()}', ${guildId});`;
 
                             db.query(sql, (err, result) => {
-                                if (err) console.log('ERROR:', err);
+                                if (err) throw err;
 
                                 if (result) {
                                     message.reply(i18n.commands.servertime.offsetSetSuccess + `\`${offsetTz}\``);
@@ -175,7 +175,7 @@ client.on('message', message => {
                 sql = `SELECT offset FROM \`guild_gmt_offsets\` WHERE guild_id = ${guildId} LIMIT 1;`;
 
                 db.query(sql, (err, result) => {
-                    if (err) console.log('ERROR:', err);
+                    if (err) throw err;
 
                     serverGmtOffset = result[0].offset;
 
@@ -201,20 +201,10 @@ client.on('message', message => {
                             }
                         });
                     } catch (err) {
-                        console.log('ERROR: ', err);
+                        throw err;
                     }
                 });
 
-                break;
-            case 'init-guild':
-                if (!message.member.hasPermission('ADMINISTRATOR')) {
-                    message.reply(i18n.general.accessDenied);
-                    return;
-                }
-
-                initGuild(message.guild);
-
-                message.reply(i18n.commands.initGuild.success);
                 break;
             default:
                 break;
@@ -226,11 +216,16 @@ function getGuildId(message, callback) {
     sql = `SELECT id FROM guilds WHERE identifier = '${message.guild.id}' LIMIT 1;`;
 
     db.query(sql, (err, result) => {
-        if (err) console.log('ERROR:', err);
+        if (err) throw err;
 
         if (!result.length) {
-            message.reply('Error: failed to fetch guild, aborting.');
-            return;
+            initGuild(message.guild);
+
+            db.query(sql, (err, result) => {
+                if (err) throw err;
+
+                callback(result[0].id);
+            });
         }
 
         callback(result[0].id);
@@ -242,7 +237,7 @@ function initGuild(guild) {
     let sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${guild.id}', '${guild.name}');`;
 
     db.query(sql, (err, result) => {
-        if (err) console.log('ERROR:', err);
+        if (err) throw err;
     });
 }
 

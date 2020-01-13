@@ -6,6 +6,7 @@ GuildAssistant is a Discord bot written in JavaScript that is meant to help with
 ## Requirements
 * Node.js 10.11.x or higher.
 * NPM 6.13.1 or higher.
+* MySQL or MariaDB 5.7 or higher
 
 ## Installation
 * Clone to a directory on the server

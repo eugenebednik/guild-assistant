@@ -1,9 +1,0 @@
-{
-    "prefix": "$",
-    "token": "your Discord bot token here",
-    "google": {
-        "translate": {
-            "apiKey": "your Google Translate API key here"
-        }
-    }
-}

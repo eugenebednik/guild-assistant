@@ -1,0 +1,25 @@
+{
+    "general": {
+        "accessDenied": "sorry my friend, but you either ain't an admin or I really don't like you. Go away."
+    },
+    "commands": {
+        "initGuild": {
+            "success": "successfully initialized or re-initialized guild in the database."
+        },
+        "prefix": {
+            "message": "You can ping me directly or use the following prefix: "
+        },
+        "servertime": {
+            "syntaxHelp": "the correct command is `servertime` (displays current server time) or `servertime offset GMT`, `servertime offset +4`.",
+            "gmtOffsetNotSet": "server GMT offset is not set. Please set your server's GMT offset by running $servertime offset <GMT|number>. Examples: `servertime offset -8`, `servertime offset +4`, `servertime offset GMT`.",
+            "incorrectOffset": "incorrect offset. Correct syntax: `servertime offset -4` or `servertime offset GMT`",
+            "offsetSetSuccess": "offset set successfully to: ",
+            "offsetSetFailure": "failed to set offset. There has been an error and I am initiating self-destruct sequence.",
+            "firstRunHelp": "please set the GMT offset for your guild first. Run `servertime offset <offset>`. Offset is between `-9` and `+14`, or simply `GMT` if your server runs in the UTC timezone.",
+            "serverTime": "Server time"
+        },
+        "t": {
+            "syntaxHelp": "the correct syntax is `$tr <2 letter language code> <text>` Example: `$tr ru Hello, asshat!`."
+        }
+    }
+}

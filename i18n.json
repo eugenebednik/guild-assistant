@@ -1,0 +1,31 @@
+{
+    "prefix": "$",
+    "token": "NjY1MTUxMTMwNjA2NzY0MDU1.XhhcZA.4J-_p7hDKIkrwUUXyZexObb3Dic",
+    "google": {
+        "translate": {
+            "apiKey": "AIzaSyD_7UChvhx7KXCX70M4OSpIL-KEpSP6rT8"
+        }
+    },
+    "database": {
+        "host": "127.0.0.1",
+        "database": "guildassistant",
+        "username": "username",
+        "password": "secret"
+    },
+    "timeCalculator": {
+        "api": {
+            "areaUrl": "http://worldtimeapi.org/api/timezone",
+            "ipUrl": "http://worldtimeapi.org/api/ip"
+        }
+    },
+    "commands": {
+        "t": {
+            "syntaxHelp": "The correct syntax is `$tr <2 letter language code> <text>` Example: `$tr ru Hello, asshat!`."
+        },
+        "servertime": {
+            "syntaxHelp": "The correct command is `$servertime (displays current server time) or $servertime <days> <hours> <minutes> (calculates what time it will be on the server after a certain period of time, calculated from your own timezone)`. Example: `$gmtcalc 1 day 2 hours 11 minutes`.",
+            "gmtOffsetNotSet": "Server GMT offset is not set. Please set your server's GMT offset by running $servertime offset <number>. Example: $servertime offset -8 or $servertime offset +4",
+            "incorrectOffset": "Incorrect offset. Correct syntax: $servertime offset -4 or $servertime offset +11"
+        }
+    }
+}

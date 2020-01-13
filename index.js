@@ -174,6 +174,11 @@ client.on('message', message => {
                 db.query(sql, (err, result) => {
                     if (err) throw err;
 
+                    if (!result.length) {
+                        message.reply(i18n.commands.servertime.firstRunHelp);
+                        return;
+                    }
+
                     serverGmtOffset = result[0].offset;
 
                     try {

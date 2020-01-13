@@ -1,31 +1,25 @@
 {
-    "prefix": "$",
-    "token": "NjY1MTUxMTMwNjA2NzY0MDU1.XhhcZA.4J-_p7hDKIkrwUUXyZexObb3Dic",
-    "google": {
-        "translate": {
-            "apiKey": "AIzaSyD_7UChvhx7KXCX70M4OSpIL-KEpSP6rT8"
-        }
-    },
-    "database": {
-        "host": "127.0.0.1",
-        "database": "guildassistant",
-        "username": "username",
-        "password": "secret"
-    },
-    "timeCalculator": {
-        "api": {
-            "areaUrl": "http://worldtimeapi.org/api/timezone",
-            "ipUrl": "http://worldtimeapi.org/api/ip"
-        }
+    "general": {
+        "accessDenied": "sorry my friend, but you either ain't an admin or I really don't like you. Go away."
     },
     "commands": {
-        "t": {
-            "syntaxHelp": "The correct syntax is `$tr <2 letter language code> <text>` Example: `$tr ru Hello, asshat!`."
+        "initGuild": {
+            "success": "successfully initialized or re-initialized guild in the database."
+        },
+        "prefix": {
+            "message": "You can ping me directly or use the following prefix: "
         },
         "servertime": {
-            "syntaxHelp": "The correct command is `$servertime (displays current server time) or $servertime <days> <hours> <minutes> (calculates what time it will be on the server after a certain period of time, calculated from your own timezone)`. Example: `$gmtcalc 1 day 2 hours 11 minutes`.",
-            "gmtOffsetNotSet": "Server GMT offset is not set. Please set your server's GMT offset by running $servertime offset <number>. Example: $servertime offset -8 or $servertime offset +4",
-            "incorrectOffset": "Incorrect offset. Correct syntax: $servertime offset -4 or $servertime offset +11"
+            "syntaxHelp": "the correct command is `servertime` (displays current server time) or `servertime offset GMT`, `servertime offset +4`.",
+            "gmtOffsetNotSet": "server GMT offset is not set. Please set your server's GMT offset by running $servertime offset <GMT|number>. Examples: `servertime offset -8`, `servertime offset +4`, `servertime offset GMT`.",
+            "incorrectOffset": "incorrect offset. Correct syntax: `servertime offset -4` or `servertime offset GMT`",
+            "offsetSetSuccess": "offset set successfully to: ",
+            "offsetSetFailure": "failed to set offset. There has been an error and I am initiating self-destruct sequence.",
+            "firstRunHelp": "please set the GMT offset for your guild first. Run `servertime offset <offset>`. Offset is between `-9` and `+14`, or simply `GMT` if your server runs in the UTC timezone.",
+            "serverTime": "Server time"
+        },
+        "t": {
+            "syntaxHelp": "the correct syntax is `$tr <2 letter language code> <text>` Example: `$tr ru Hello, asshat!`."
         }
     }
 }

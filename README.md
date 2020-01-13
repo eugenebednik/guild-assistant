@@ -10,6 +10,6 @@ GuildAssistant is a Discord bot written in JavaScript that is meant to help with
 
 ## Installation
 * Clone to a directory on the server
+* Copy `.env.example` to `.env` and modify environment variables to reflect your own.
 * Run `npm install`.
-* Edit `config.json` and replace various config values with your own.
 * Run `npm run start`.

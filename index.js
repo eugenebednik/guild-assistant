@@ -218,9 +218,7 @@ function getGuildId(message, callback) {
     db.query(sql, (err, result) => {
         if (err) throw err;
 
-        console.log(result);
-
-        if (!result) {
+        if (!result.length) {
             initGuild(message.guild, result => {
                 callback(result);
                 return;

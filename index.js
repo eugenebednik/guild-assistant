@@ -221,6 +221,7 @@ function getGuildId(message, callback) {
         if (!result) {
             initGuild(message.guild, result => {
                 callback(result);
+                return;
             });
         }
 

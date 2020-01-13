@@ -45,7 +45,7 @@ const unirest = require('unirest');
 client.on("guildCreate", guild => {
     console.log(`Joined a new guild: ${guild.name}`);
 
-    initGuild(guild);
+    initGuild(guild, result => {});
 })
 
 // App begin
@@ -213,18 +213,14 @@ client.on('message', message => {
 });
 
 function getGuildId(message, callback) {
-    sql = `SELECT id FROM guilds WHERE identifier = '${message.guild.id}' LIMIT 1;`;
+    let sql = `SELECT id FROM guilds WHERE identifier = '${message.guild.id}' LIMIT 1;`;
 
     db.query(sql, (err, result) => {
         if (err) throw err;
 
-        if (!result.length) {
-            initGuild(message.guild);
-
-            db.query(sql, (err, result) => {
-                if (err) throw err;
-
-                callback(result[0].id);
+        if (!result) {
+            initGuild(message.guild, result => {
+                callback(result);
             });
         }
 
@@ -232,12 +228,13 @@ function getGuildId(message, callback) {
     });
 }
 
-function initGuild(guild) {
-    // Add this guild to the DB.
+function initGuild(guild, callback) {
     let sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${guild.id}', '${guild.name}');`;
 
     db.query(sql, (err, result) => {
         if (err) throw err;
+
+        callback(result.insertId);
     });
 }
 

@@ -44,8 +44,6 @@ const unirest = require('unirest');
 
 client.on("guildCreate", guild => {
     console.log(`Joined a new guild: ${guild.name}`);
-
-    initGuild(guild, result => {});
 })
 
 // App begin
@@ -67,7 +65,6 @@ client.on('messageReactionAdd', (messageReaction, user) => {
 });
 
 client.on('message', message => {
-    // Get local DB guild ID if not set already
     getGuildId(message, guildId => {
         const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
         if (!prefixRegex.test(message.content)) return;
@@ -217,25 +214,19 @@ function getGuildId(message, callback) {
 
     db.query(sql, (err, result) => {
         if (err) throw err;
+        let guildId = null;
 
         if (!result.length) {
-            initGuild(message.guild, result => {
-                callback(result);
-                return;
+            sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${guild.id}', '${guild.name}');`;
+
+            db.query(sql, (err, result) => {
+                if (err) throw err;
+
+                callback(result.insertId);
             });
+        } else {
+            callback(result[0].id);
         }
-
-        callback(result[0].id);
-    });
-}
-
-function initGuild(guild, callback) {
-    let sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${guild.id}', '${guild.name}');`;
-
-    db.query(sql, (err, result) => {
-        if (err) throw err;
-
-        callback(result.insertId);
     });
 }
 

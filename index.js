@@ -59,7 +59,7 @@ client.on('messageReactionAdd', (messageReaction, user) => {
 
     let countryCode = code(emoji.name);
     if (countryCode !== undefined) {
-        const sanitizedMessage = replaceMentions(client, message.content);
+        const sanitizedMessage = replaceMentions(client, message.content, message.guild);
         googleTranslate.translate(countryCode.toLowerCase(), sanitizedMessage, message, false);
     }
 });
@@ -87,9 +87,9 @@ client.on('message', message => {
                 if (args.length < 2 || (args.length === 1 && args[0].toLowerCase() === 'help')) {
                     message.reply(i18n.commands.t.syntaxHelp);
                     return;
-                };
+                }
                 const targetLang = args.shift().toLowerCase();
-                const sanitizedMessage = replaceMentions(client, args.join(' '));
+                const sanitizedMessage = replaceMentions(client, args.join(' '), message.guild);
                 googleTranslate.translate(targetLang, sanitizedMessage, message, true);
                 break;
             case 'prefix':

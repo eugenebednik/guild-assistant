@@ -19,7 +19,7 @@
             "serverTime": "Server time"
         },
         "t": {
-            "syntaxHelp": "the correct syntax is `$tr <2 letter language code> <text>` Example: `$tr ru Hello, asshat!`."
+            "syntaxHelp": "the correct syntax is `t <2 letter language code> <text>` Example: `t ru Hello, asshat!`."
         }
     }
 }

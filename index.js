@@ -8,6 +8,19 @@ const client = new Discord.Client();
 const prefix = process.env.BOT_PREFIX;
 const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+// Logging
+const log4js = require('log4js');
+log4js.configure({
+    appenders: {
+        botLogger: { type: 'file', filename: process.env.LOG_FILE },
+    },
+    categories: {
+        default: { appenders: ['botLogger'], level: process.env.LOG_LEVEL }
+    },
+});
+
+const logger = log4js.getLogger('botLogger');
+
 // Database stuff
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -18,7 +31,10 @@ const db = mysql.createConnection({
 
 // connect to database
 db.connect(err => {
-    if (err) throw err;
+    if (err) {
+        logger.error("ERROR:", err);
+        throw err;
+    }
     console.log('Connected to the database.');
 });
 
@@ -31,7 +47,7 @@ const { stripTags, replaceMentions } = require('./resources/helpers/Helpers');
 // Google Translate component
 const GoogleTranslate = require('./components/google-translate/GoogleTranslate');
 const languages = require('./resources/languages.js');
-const googleTranslate = new GoogleTranslate(process.env.GOOGLE_TRANSLATE_API_KEY, languages);
+const googleTranslate = new GoogleTranslate(process.env.GOOGLE_TRANSLATE_API_KEY, languages, logger);
 
 // Country emojis
 const { flag, code, name, countries } = require('country-emoji');
@@ -151,7 +167,10 @@ client.on('message', message => {
                             sql = `REPLACE INTO \`guild_gmt_offsets\` (offset, guild_id) VALUES ('${offsetTz.toUpperCase()}', ${guildId});`;
 
                             db.query(sql, (err, result) => {
-                                if (err) throw err;
+                                if (err) {
+                                    logger.error('ERROR:', err);
+                                    throw err;
+                                }
 
                                 if (result) {
                                     message.reply(i18n.commands.servertime.offsetSetSuccess + `\`${offsetTz}\``);
@@ -172,7 +191,10 @@ client.on('message', message => {
                 sql = `SELECT offset FROM \`guild_gmt_offsets\` WHERE guild_id = ${guildId} LIMIT 1;`;
 
                 db.query(sql, (err, result) => {
-                    if (err) throw err;
+                    if (err) {
+                        logger.error('ERROR:', err);
+                        throw err;
+                    };
 
                     if (!result.length) {
                         message.reply(i18n.commands.servertime.firstRunHelp);
@@ -203,6 +225,7 @@ client.on('message', message => {
                             }
                         });
                     } catch (err) {
+                        logger.error('ERROR:', err);
                         throw err;
                     }
                 });
@@ -218,14 +241,20 @@ function getGuildId(message, callback) {
     let sql = `SELECT id FROM guilds WHERE identifier = '${message.guild.id}' LIMIT 1;`;
 
     db.query(sql, (err, result) => {
-        if (err) throw err;
+        if (err) {
+            logger.error('ERROR:', err);
+            throw err;
+        }
         let guildId = null;
 
         if (!result.length) {
             sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${guild.id}', '${guild.name}');`;
 
             db.query(sql, (err, result) => {
-                if (err) throw err;
+                if (err) {
+                    logger.error('ERROR:', err);
+                    throw err;
+                };
 
                 callback(result.insertId);
             });

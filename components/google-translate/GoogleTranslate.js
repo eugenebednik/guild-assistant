@@ -1,7 +1,8 @@
 class GoogleTranslate {
-    constructor(apiKey, languages) {
+    constructor(apiKey, languages, logger) {
         this.googleTranslate = require('google-translate')(apiKey);
         this.languages = languages;
+        this.logger = logger;
     }
 
     translate(targetLang, textToTranslate, message, reply = false) {
@@ -38,7 +39,8 @@ class GoogleTranslate {
                             });
                         }
                     } catch (err) {
-                        console.log('ERROR:', err);
+                        this.logger.error('ERROR:', err);
+                        throw err;
                     }
                 }
             });

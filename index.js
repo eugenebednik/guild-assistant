@@ -248,7 +248,7 @@ function getGuildId(message, callback) {
         let guildId = null;
 
         if (!result.length) {
-            sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${guild.id}', '${guild.name}');`;
+            sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${message.guild.id}', '${message.guild.name}');`;
 
             db.query(sql, (err, result) => {
                 if (err) {

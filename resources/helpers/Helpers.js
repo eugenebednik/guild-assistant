@@ -1,16 +1,5 @@
 const XRegExp = require('xregexp');
-
-function stripTags(message) {
-    const matches = XRegExp.matchRecursive(message, '<', '>', 'g')
-
-    if (!matches) return message;
-
-    matches.forEach(tag => {
-        message.replace(tag, '');
-    });
-
-    return message;
-}
+const i18n = require('../../i18n.json');
 
 function replaceMentions(client, message, guild) {
     const matches = XRegExp.matchRecursive(message, '<', '>', 'g')
@@ -42,7 +31,26 @@ function replaceMentions(client, message, guild) {
     return message;
 }
 
+function moveMessage(args, client, message) {
+    let targetChannelMatches = XRegExp.matchRecursive(args[1], '<#', '>', 'g');
+
+    if (targetChannelMatches) {
+        let targetChannel = client.channels.get(`${targetChannelMatches[0]}`);
+
+        if (targetChannel) {
+            message.channel.fetchMessage(args[0]).then(async targetMessage => {
+                await targetChannel.send(targetMessage.content);
+                if (targetMessage) targetMessage.delete();
+            });
+        } else {
+            message.reply(i18n.commands.msgmove.channelNotFound);
+        }
+    } else {
+        message.reply(i18n.commands.msgmove.channelNotFound);
+    }
+}
+
 module.exports = {
-    stripTags: stripTags,
     replaceMentions: replaceMentions,
+    moveMessage: moveMessage,
 };

@@ -42,7 +42,7 @@ db.connect(err => {
 global.db = db;
 
 // Helpers
-const { stripTags, replaceMentions } = require('./resources/helpers/Helpers');
+const { replaceMentions, moveMessage } = require('./resources/helpers/Helpers');
 
 // Google Translate component
 const GoogleTranslate = require('./components/google-translate/GoogleTranslate');
@@ -229,6 +229,15 @@ client.on('message', message => {
                         throw err;
                     }
                 });
+
+                break;
+            case 'msgmove':
+                if (!args.length || (args.length && args.length !== 2)) {
+                    message.reply(i18n.commands.msgmove.syntaxHelp);
+                    return;
+                } else {
+                    moveMessage(args, client, message)
+                }
 
                 break;
             default:

@@ -7,7 +7,7 @@
             "success": "successfully initialized or re-initialized guild in the database."
         },
         "msgmove": {
-            "syntaxHelp": "the correct command is `movemessage <message ID> <#channel>` Example: `movemessage 448400100591403024 #somechannel`. The bost MUST have permission to manage messages in the channel.",
+            "syntaxHelp": "the correct command is `msgmove <message ID> <#channel>` Example: `,mgsmove 448400100591403024 #somechannel`. The bost MUST have permission to manage messages in the channel.",
             "channelNotFound": "the channel you specified was not found."
         },
         "prefix": {

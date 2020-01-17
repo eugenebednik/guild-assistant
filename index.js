@@ -97,6 +97,11 @@ client.on('message', message => {
                 message.channel.send('boop');
                 break;
             case 'stats':
+                if (!message.member.hasPermission('ADMINISTRATOR')) {
+                    message.reply(i18n.general.accessDenied);
+                    return;
+                }
+
                 message.channel.send(`Server count: ${client.guilds.size}`);
                 break;
             case 't':

@@ -1,6 +1,6 @@
 {
     "name": "guild-assistant",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "A Discord bot with a variety of functions aimed at easing your daily grind. Aimed to be the one-stop shop for gamers and their guilds.",
     "main": "index.js",
     "scripts": {
@@ -31,6 +31,7 @@
     "homepage": "https://github.com/eugenebednik/guild-assistant#readme",
     "dependencies": {
         "country-emoji": "^1.5.0",
+        "country-language": "^0.1.7",
         "discord.js": "^11.5.1",
         "dotenv": "^8.2.0",
         "eslint": "^6.8.0",

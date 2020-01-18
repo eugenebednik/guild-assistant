@@ -34,7 +34,7 @@ function replaceMentions(client, message, guild) {
 function moveMessage(args, client, message) {
     let targetChannelMatches = XRegExp.matchRecursive(args[1], '<#', '>', 'g');
 
-    if (targetChannelMatches) {
+    if (targetChannelMatches.length) {
         let targetChannel = client.channels.get(`${targetChannelMatches[0]}`);
 
         if (targetChannel) {
@@ -50,7 +50,20 @@ function moveMessage(args, client, message) {
     }
 }
 
+function getEmoji(string) {
+    console.log(string);
+    const result = XRegExp.matchRecursive(string, '<:name:', '>', 'g');
+    console.log(result);
+
+    if (result.length) {
+        return result;
+    } else {
+        return;
+    }
+}
+
 module.exports = {
     replaceMentions: replaceMentions,
     moveMessage: moveMessage,
+    getEmoji: getEmoji,
 };

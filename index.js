@@ -46,14 +46,10 @@ const { replaceMentions, moveMessage } = require('./resources/helpers/Helpers');
 
 // Google Translate component
 const GoogleTranslate = require('./components/google-translate/GoogleTranslate');
-const languages = require('./resources/languages.js');
-const googleTranslate = new GoogleTranslate(process.env.GOOGLE_TRANSLATE_API_KEY, languages, logger);
+const googleTranslate = new GoogleTranslate(process.env.GOOGLE_TRANSLATE_API_KEY, logger);
 
 // Country emojis
 const { flag, code, name, countries } = require('country-emoji');
-
-// Time difference calculator component
-const { extractFormats } = require('./components/time-calculator/TimeCalculator');
 
 // UniREST
 const unirest = require('unirest');
@@ -74,7 +70,7 @@ client.on('messageReactionAdd', (messageReaction, user) => {
     if (message.author.bot) return;
 
     let countryCode = code(emoji.name);
-    if (countryCode !== undefined) {
+    if (countryCode) {
         const sanitizedMessage = replaceMentions(client, message.content, message.guild);
         googleTranslate.translate(countryCode.toLowerCase(), sanitizedMessage, message, false);
     }
@@ -107,10 +103,18 @@ client.on('message', message => {
             case 't':
                 if (args.length < 2 || (args.length === 1 && args[0].toLowerCase() === 'help')) {
                     message.reply(i18n.commands.t.syntaxHelp);
+
                     return;
                 }
-                const targetLang = args.shift().toLowerCase();
+
+                let targetLang = args.shift().toLowerCase();
                 const sanitizedMessage = replaceMentions(client, args.join(' '), message.guild);
+                let targetLangEmoji = code(targetLang);
+
+                if (targetLangEmoji) {
+                    targetLang = targetLangEmoji.toLowerCase();
+                }
+
                 googleTranslate.translate(targetLang, sanitizedMessage, message, true);
                 break;
             case 'prefix':

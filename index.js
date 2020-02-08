@@ -207,7 +207,8 @@ client.on('message', message => {
               });
             }
           });
-        } catch (err) {
+        }
+        catch (err) {
           logger.error('ERROR:', err);
           throw err;
         }

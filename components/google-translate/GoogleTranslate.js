@@ -15,17 +15,20 @@ class GoogleTranslate {
                 if (err) throw err;
                 if (languages && languages[0]) {
                     if (targetLang === 'il') {
-                        return 'he'; // Hebrew is special for Israel
-                    } else {
+                        return 'he';
+                    }
+                    else {
                         return languages[0].iso639_1.toLowerCase();
                     }
-                } else {
+                }
+                else {
                     return 'en';
                 }
             });
 
             targetLanguage = languageDefinitions.find(lang => lang.code === countryLang);
-        } else {
+        }
+        else {
             targetLanguage = languageDefinitions.find(lang => lang.code === targetLang.toLowerCase());
 
             if (!targetLanguage) {
@@ -45,7 +48,8 @@ class GoogleTranslate {
 
                 if (isCommand) {
                     message.reply(targetLanguage.name + ':\n' + '```' + translatedText + '```');
-                } else {
+                }
+                else {
                     message.channel.send({
                         embed: {
                             color: 3447003,
@@ -58,8 +62,8 @@ class GoogleTranslate {
 
                             footer: {
                                 text: sourceLanguage.name + ' ⟶ ' + targetLanguage.name,
-                            }
-                        }
+                            },
+                        },
                     });
                 }
             }

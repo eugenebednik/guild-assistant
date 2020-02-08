@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const Discord = require('discord.js');
-const mysql = require('mysql');
 const moment = require('moment');
 const i18n = require('./i18n.json');
 const client = new Discord.Client();
@@ -21,25 +20,15 @@ log4js.configure({
 
 const logger = log4js.getLogger('botLogger');
 
-// Database stuff
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
-
-// connect to database
-db.connect(err => {
-  if (err) {
-    logger.error('ERROR:', err);
-    throw err;
-  }
-  console.log('Connected to the database.');
-});
-
-// Globals
-global.db = db;
+// Database
+const Database = require('./components/database/Database.js');
+const db = new Database(
+  process.env.DB_HOST,
+  process.env.DB_USERNAME,
+  process.env.DB_PASSWORD,
+  process.env.DB_DATABASE,
+  logger,
+);
 
 // Helpers
 const { replaceMentions, moveMessage } = require('./resources/helpers/Helpers');
@@ -77,7 +66,7 @@ client.on('messageReactionAdd', (messageReaction, user) => {
 });
 
 client.on('message', message => {
-  getGuildId(message, guildId => {
+  db.getGuild(message.guild.id, message.guild.name, guildId => {
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
     if (!prefixRegex.test(message.content)) return;
 
@@ -89,8 +78,7 @@ client.on('message', message => {
     let targetLang;
     let targetLangEmoji;
     let subCommand;
-    let sql;
-    let serverGmtOffset;
+    let param;
 
     switch (command) {
     case 'ping':
@@ -134,7 +122,6 @@ client.on('message', message => {
 
       if (subCommand) {
         let offsetTz = 'GMT';
-        const param = args[0].toLowerCase();
 
         switch (subCommand) {
         case 'help':
@@ -145,6 +132,8 @@ client.on('message', message => {
             message.reply(i18n.commands.servertime.incorrectOffset);
             return;
           }
+
+          param = args[0].toLowerCase();
 
           if (!message.member.hasPermission('ADMINISTRATOR')) {
             message.reply(i18n.general.accessDenied);
@@ -176,14 +165,7 @@ client.on('message', message => {
             }
           }
 
-          sql = `REPLACE INTO \`guild_gmt_offsets\` (offset, guild_id) VALUES ('${offsetTz.toUpperCase()}', ${guildId});`;
-
-          db.query(sql, (err, result) => {
-            if (err) {
-              logger.error('ERROR:', err);
-              throw err;
-            }
-
+          db.setServerTimezone(guildId, offsetTz.toUpperCase(), result => {
             if (result) {
               message.reply(i18n.commands.servertime.offsetSetSuccess + `\`${offsetTz}\``);
             }
@@ -198,23 +180,14 @@ client.on('message', message => {
         }
       }
 
-      sql = `SELECT offset FROM \`guild_gmt_offsets\` WHERE guild_id = ${guildId} LIMIT 1;`;
-
-      db.query(sql, (err, result) => {
-        if (err) {
-          logger.error('ERROR:', err);
-          throw err;
-        }
-
-        if (!result.length) {
+      db.getServerTimezone(guildId, result => {
+        if (!result) {
           message.reply(i18n.commands.servertime.firstRunHelp);
           return;
         }
 
-        serverGmtOffset = result[0].offset;
-
         try {
-          unirest.get(`${process.env.TIMEZONE_API_URL}/${serverGmtOffset}`).end(response => {
+          unirest.get(`${process.env.TIMEZONE_API_URL}/${result}`).end(response => {
             if (response.ok) {
               const dateTime = moment.parseZone(response.body.datetime).format('dddd, MMMM Do YYYY, HH:mm:ss');
 
@@ -228,19 +201,17 @@ client.on('message', message => {
                   description: `${i18n.commands.servertime.serverTime}: ${dateTime}`,
 
                   footer: {
-                    text: `${i18n.commands.servertime.serverTime}: ${serverGmtOffset}`,
+                    text: `${i18n.commands.servertime.serverTime}: ${result}`,
                   },
                 },
               });
             }
           });
-        }
-        catch (err) {
+        } catch (err) {
           logger.error('ERROR:', err);
           throw err;
         }
       });
-
       break;
     case 'msgmove':
       if (!args.length || (args.length && args.length !== 2)) {
@@ -252,37 +223,22 @@ client.on('message', message => {
       }
 
       break;
+    case 'stick':
+      if (args.length < 2 || (args.length === 1 && args[0].toLowerCase() === 'help')) {
+        message.reply(i18n.commands.stick.syntaxHelp);
+
+        return;
+      }
+
+      sanitizedMessage = replaceMentions(client, args.join(' '), message.guild);
+
+      console.log(sanitizedMessage);
+      break;
     default:
       break;
     }
   });
 });
 
-function getGuildId(message, callback) {
-  let sql = `SELECT id FROM guilds WHERE identifier = '${message.guild.id}' LIMIT 1;`;
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      logger.error('ERROR:', err);
-      throw err;
-    }
-
-    if (!result.length) {
-      sql = `REPLACE INTO \`guilds\` (identifier, name) VALUES ('${message.guild.id}', '${message.guild.name}');`;
-
-      db.query(sql, (err) => {
-        if (err) {
-          logger.error('ERROR:', err);
-          throw err;
-        }
-
-        callback(result.insertId);
-      });
-    }
-    else {
-      callback(result[0].id);
-    }
-  });
-}
 
 client.login(process.env.BOT_DISCORD_TOKEN);

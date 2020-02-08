@@ -24,6 +24,9 @@
         },
         "t": {
             "syntaxHelp": "the correct syntax is `t <2 letter language code> <text>` Example: `t ru Hello, asshat!`."
+        },
+        "stick": {
+            "syntaxHelp": "the correct syntax is `stick <message>`."
         }
     }
 }

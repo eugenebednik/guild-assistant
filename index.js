@@ -42,6 +42,8 @@ const Stick = require('./components/stick/Stick');
 const stick = new Stick(db);
 const MoveMessage = require('./components/movemessage/MoveMessage');
 const moveMessage = new MoveMessage();
+const Broadcast = require('./components/broadcast/Broadcast');
+const broadcast = new Broadcast(db);
 
 /**
  * Country emojis
@@ -114,6 +116,9 @@ client.on('message', message => {
       break;
     case 'unstick':
       stick.unstick(guildId, message);
+      break;
+    case 'broadcast':
+      broadcast.handle(guildId, args, message);
       break;
     default:
       stick.sendAnyStickies(guildId, message);

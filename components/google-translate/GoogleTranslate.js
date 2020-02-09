@@ -24,7 +24,7 @@ class GoogleTranslate {
     let targetLanguage;
 
     if (isCommand) {
-      if (args.length || (args.length === 1 && args[0].toLowerCase() === 'help')) {
+      if (!args.length || (args.length && args[0].toLowerCase() === 'help')) {
         message.reply(i18n.commands.t.syntaxHelp);
         return;
       }

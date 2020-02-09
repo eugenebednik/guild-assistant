@@ -24,9 +24,10 @@
             "serverTime": "Server time"
         },
         "t": {
-            "syntaxHelp": "the correct syntax is `t <2 letter language code> <text>` Example: `t ru Hello, asshat!`."
+            "syntaxHelp": "the correct syntax is `t <2 letter language code> <text>` Example: `t ru Hello, world!`."
         },
         "stick": {
+            "createdAtLabel": "Created at:",
             "syntaxHelp": "the correct syntax is `stick <title> | <message>`. The `|` symbol separates the title from the message.",
             "success": "the channel sticky message has been set.",
             "alreadyExists": "the channel sticky message already exists. Use `unstick` command to remove the old one first."
@@ -37,6 +38,7 @@
         },
         "broadcast": {
             "title": "SERVER BROADCAST",
+            "broadcastOnLabel": "Broadcast on:",
             "sendSuccess": "the broadcast was sent successfully",
             "noChannelsSet": "no broadcast channels are defined. Please go into some channels and run `broadcast add-channel` in them.",
             "syntaxHelp": "the correct syntax is `broadcast <message>` to broadcast a message to all channels set in `broadcast add-channel`. To remove a specific channel: `broadcast remove-channel`. To remove all: `broadcast remove-all-channels`.",

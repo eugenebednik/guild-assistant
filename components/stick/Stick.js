@@ -108,7 +108,7 @@ class Stick {
         description: sanitizedMessage,
 
         footer: {
-          text: `Created at: ${dateTime}`,
+          text: `${i18n.commands.stick.createdAtLabel} ${dateTime}`,
         },
       },
     };

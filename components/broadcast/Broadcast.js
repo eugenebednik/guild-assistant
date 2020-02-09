@@ -69,7 +69,7 @@ class Broadcast {
                   description: sanitizedMessage,
 
                   footer: {
-                    text: `Broadcast on: ${dateTime}`,
+                    text: `${i18n.commands.broadcast.broadcastOnLabel} ${dateTime}`,
                   },
                 },
               });

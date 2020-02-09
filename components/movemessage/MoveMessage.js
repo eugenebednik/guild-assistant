@@ -8,15 +8,17 @@ class MoveMessage {
       return;
     }
 
-    if (/^[0-9]{1,45}$/.test(args[0])) {
+    if (/^[0-9]{1,18}$/.test(args[0])) {
       const targetChannelMatches = XRegExp.matchRecursive(args[1], '<#', '>', 'g');
 
       if (targetChannelMatches.length) {
         const targetChannel = client.channels.get(`${targetChannelMatches[0]}`);
 
         if (targetChannel) {
-          message.channel.fetchMessage(args[0]).then(async targetMessage => {
-            await targetChannel.send({
+          const targetMessage = message.channel.messages.get(args[0]);
+          if (targetMessage) {
+            targetMessage.delete();
+            targetChannel.send({
               embed: {
                 color: 3447003,
                 author: {
@@ -26,8 +28,10 @@ class MoveMessage {
                 description: targetMessage.content,
               },
             });
-            if (targetMessage) await targetMessage.delete();
-          });
+          }
+          else {
+            message.reply(i18n.commands.movemessage.invalidMessageId);
+          }
         }
         else {
           message.reply(i18n.commands.movemessage.channelNotFound);
@@ -36,9 +40,6 @@ class MoveMessage {
       else {
         message.reply(i18n.commands.movemessage.channelNotFound);
       }
-    }
-    else {
-      message.reply(i18n.commands.movemessage.invalidMessageId);
     }
   }
 }

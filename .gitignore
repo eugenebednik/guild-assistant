@@ -1,2 +1,4 @@
 node_modules
-./.env
+.env
+.idea
+bot.log

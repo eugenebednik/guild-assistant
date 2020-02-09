@@ -34,8 +34,6 @@
         "unstick": {
             "deleted": "sticky message for this channel has been deleted.",
             "noMessageExists": "no sticky messages exist for this channel."
-<<<<<<< HEAD
-=======
         },
         "broadcast": {
             "title": "SERVER BROADCAST",
@@ -52,7 +50,6 @@
             "removeAllChannels": {
                 "success": "all broadcast channels have been removed from the database."
             }
->>>>>>> develop
         }
     }
 }

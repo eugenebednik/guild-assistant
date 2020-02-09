@@ -32,13 +32,13 @@ class Database {
       if (!result.length) {
         sql = `REPLACE INTO \`guilds\` (snowflake, name) VALUES ('${snowflake}', '${guildName}');`;
 
-        this.db.query(sql, (err) => {
+        this.db.query(sql, (err, newResult) => {
           if (err) {
             this.logger.error('ERROR:', err);
             throw err;
           }
 
-          callback(result.insertId);
+          callback(newResult.insertId);
         });
       }
       else {

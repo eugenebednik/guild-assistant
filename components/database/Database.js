@@ -131,7 +131,7 @@ class Database {
         throw err;
       }
 
-      callback();
+      if (typeof callback === 'function') callback();
     });
   }
 
@@ -168,6 +168,70 @@ class Database {
       else {
         callback(false);
       }
+    });
+  }
+
+  getBroadcastChannels(guildId, callback) {
+    const sql = `SELECT snowflake FROM \`broadcast_channels\` WHERE guild_id = ${guildId};`;
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR:', err);
+        throw err;
+      }
+
+      if (result.length) {
+        callback(result);
+      }
+      else {
+        callback(null);
+      }
+    });
+  }
+
+  setBroadcastChannel(guildId, channelSnowflake, callback) {
+    const sql = `REPLACE INTO \`broadcast_channels\` (guild_id, snowflake) VALUES (${guildId}, '${channelSnowflake}');`;
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR:', err);
+        throw err;
+      }
+
+      if (typeof callback === 'function') {
+        if (result) {
+          callback(true);
+        }
+        else {
+          callback(false);
+        }
+      }
+    });
+  }
+
+  deleteBroadcastChannel(guildId, channelSnowflake, callback) {
+    const sql = `DELETE FROM \`broadcast_channels\` WHERE guild_id = ${guildId} AND snowflake = '${channelSnowflake}';`;
+
+    this.db.query(sql, (err) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      if (typeof callback === 'function') callback();
+    });
+  }
+
+  deleteAllBroadcastChannels(guildId, callback) {
+    const sql = `DELETE FROM \`broadcast_channels\` WHERE guild_id = ${guildId};`;
+
+    this.db.query(sql, (err) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      if (typeof callback === 'function') callback();
     });
   }
 }

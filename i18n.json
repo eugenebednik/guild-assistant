@@ -34,6 +34,25 @@
         "unstick": {
             "deleted": "sticky message for this channel has been deleted.",
             "noMessageExists": "no sticky messages exist for this channel."
+<<<<<<< HEAD
+=======
+        },
+        "broadcast": {
+            "title": "SERVER BROADCAST",
+            "sendSuccess": "the broadcast was sent successfully",
+            "noChannelsSet": "no broadcast channels are defined. Please go into some channels and run `broadcast add-channel` in them.",
+            "syntaxHelp": "the correct syntax is `broadcast <message>` to broadcast a message to all channels set in `broadcast add-channel`. To remove a specific channel: `broadcast remove-channel`. To remove all: `broadcast remove-all-channels`.",
+            "addChannel": {
+                "success": "this channel has been added to broadcast channels list.",
+                "failure": "unable to add channel to the database."
+            },
+            "removeChannel": {
+                "success": "this channel has been removed from the broadcast channels list."
+            },
+            "removeAllChannels": {
+                "success": "all broadcast channels have been removed from the database."
+            }
+>>>>>>> develop
         }
     }
 }

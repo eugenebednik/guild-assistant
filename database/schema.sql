@@ -6,6 +6,25 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+
+# Dump of table broadcast_channels
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `broadcast_channels`;
+
+CREATE TABLE `broadcast_channels` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `guild_id` bigint(20) unsigned NOT NULL,
+  `snowflake` varchar(45) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `guild_id_2` (`guild_id`,`snowflake`),
+  KEY `guild_id` (`guild_id`),
+  KEY `snowflake` (`snowflake`),
+  CONSTRAINT `broadcast_channels_ibfk_1` FOREIGN KEY (`guild_id`) REFERENCES `guilds` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
 # Dump of table guild_gmt_offsets
 # ------------------------------------------------------------
 
@@ -46,18 +65,21 @@ CREATE TABLE `guilds` (
 DROP TABLE IF EXISTS `sticky_messages`;
 
 CREATE TABLE `sticky_messages` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `guild_id` bigint(20) unsigned NOT NULL,
   `channel_snowflake` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `message_snowflake` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `unique_vals` (`channel_snowflake`,`guild_id`),
   KEY `guild_id` (`guild_id`),
   CONSTRAINT `sticky_messages_ibfk_1` FOREIGN KEY (`guild_id`) REFERENCES `guilds` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
 
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

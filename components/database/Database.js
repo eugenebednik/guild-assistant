@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const moment = require('moment');
 
 class Database {
   constructor(dbHost, dbUsername, dbPassword, dbDatabase, logger) {
@@ -47,9 +48,12 @@ class Database {
     });
   }
 
-  setChannelSticky(guildId, channelSnowflake, messageSnowflake, text, callback) {
-    const sql = `REPLACE INTO \`sticky_messages\` (guild_id, channel_snowflake, message_snowflake, message )
-                VALUES (${guildId}, '${channelSnowflake}', '${messageSnowflake}', '${text}');`;
+  setChannelSticky(guildId, channelSnowflake, messageSnowflake, title, text, callback) {
+    const now = new moment(moment.now());
+    const dateTime = now.format('YYYY-MM-DD HH:mm:ss');
+
+    const sql = `REPLACE INTO \`sticky_messages\` (guild_id, channel_snowflake, message_snowflake, title, message, created_at)
+                VALUES (${guildId}, '${channelSnowflake}', '${messageSnowflake}', '${title}', '${text}', '${dateTime}');`;
 
     this.db.query(sql, (err, result) => {
       if (err) {
@@ -57,18 +61,24 @@ class Database {
         throw err;
       }
 
-      if (result) {
-        callback(true);
-      }
-      else {
-        callback(false);
+      if (typeof callback === 'function') {
+        if (result) {
+          callback(true);
+        }
+        else {
+          callback(false);
+        }
       }
     });
   }
 
-  updateChannelSticky(stickyId, guildId, channelSnowflake, messageSnowflake, text, callback) {
+  updateChannelSticky(stickyId, guildId, channelSnowflake, messageSnowflake, title, text, callback) {
     const sql = `UPDATE \`sticky_messages\`
-                SET guild_id = ${guildId}, channel_snowflake = '${channelSnowflake}', message_snowflake = '${messageSnowflake}', message = '${text}'
+                SET guild_id = ${guildId},
+                    channel_snowflake = '${channelSnowflake}',
+                    message_snowflake = '${messageSnowflake}',
+                    title = '${title}',
+                    message = '${text}'
                 WHERE id = ${stickyId};`;
 
     this.db.query(sql, (err, result) => {
@@ -77,17 +87,19 @@ class Database {
         throw err;
       }
 
-      if (result) {
-        callback(true);
-      }
-      else {
-        callback(false);
+      if (typeof callback === 'function') {
+        if (result) {
+          callback(true);
+        }
+        else {
+          callback(false);
+        }
       }
     });
   }
 
   getChannelSticky(guildId, channelSnowflake, callback) {
-    const sql = `SELECT id, message_snowflake, message
+    const sql = `SELECT id, message_snowflake, title, message, created_at
                  FROM  \`sticky_messages\`
                  WHERE guild_id = ${guildId}
                  AND channel_snowflake = '${channelSnowflake}'

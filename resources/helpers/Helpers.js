@@ -1,5 +1,4 @@
 const XRegExp = require('xregexp');
-const i18n = require('../../i18n.json');
 
 function replaceMentions(client, message, guild) {
   const matches = XRegExp.matchRecursive(message, '<', '>', 'g');
@@ -33,39 +32,6 @@ function replaceMentions(client, message, guild) {
   return message;
 }
 
-function moveMessage(args, client, message) {
-  const targetChannelMatches = XRegExp.matchRecursive(args[1], '<#', '>', 'g');
-
-  if (targetChannelMatches.length) {
-    const targetChannel = client.channels.get(`${targetChannelMatches[0]}`);
-
-    if (targetChannel) {
-      message.channel.fetchMessage(args[0]).then(async targetMessage => {
-        await targetChannel.send(targetMessage.content);
-        if (targetMessage) await targetMessage.delete();
-      });
-    }
-    else {
-      message.reply(i18n.commands.messagemove.channelNotFound);
-    }
-  }
-  else {
-    message.reply(i18n.commands.messagemove.channelNotFound);
-  }
-}
-
-function getEmoji(string) {
-  console.log(string);
-  const result = XRegExp.matchRecursive(string, '<:name:', '>', 'g');
-  console.log(result);
-
-  if (result.length) {
-    return result;
-  }
-}
-
 module.exports = {
   replaceMentions: replaceMentions,
-  moveMessage: moveMessage,
-  getEmoji: getEmoji,
 };

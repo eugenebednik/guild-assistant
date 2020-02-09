@@ -6,6 +6,9 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+# Dump of table guild_gmt_offsets
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `guild_gmt_offsets`;
 
 CREATE TABLE `guild_gmt_offsets` (
@@ -47,7 +50,9 @@ CREATE TABLE `sticky_messages` (
   `guild_id` bigint(20) unsigned NOT NULL,
   `channel_snowflake` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `message_snowflake` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `unique_vals` (`channel_snowflake`,`guild_id`),
   KEY `guild_id` (`guild_id`),

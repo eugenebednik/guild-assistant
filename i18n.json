@@ -6,7 +6,7 @@
         "initGuild": {
             "success": "successfully initialized or re-initialized guild in the database."
         },
-        "msgmove": {
+        "messagemove": {
             "syntaxHelp": "the correct command is `msgmove <message ID> <#channel>` Example: `,mgsmove 448400100591403024 #somechannel`. The bost MUST have permission to manage messages in the channel.",
             "channelNotFound": "the channel you specified was not found."
         },
@@ -26,7 +26,13 @@
             "syntaxHelp": "the correct syntax is `t <2 letter language code> <text>` Example: `t ru Hello, asshat!`."
         },
         "stick": {
-            "syntaxHelp": "the correct syntax is `stick <message>`."
+            "syntaxHelp": "the correct syntax is `stick <message>`.",
+            "success": "the channel sticky message has been set.",
+            "alreadyExists": "the channel sticky message already exists. Use `unset` command to remove the old one first."
+        },
+        "unstick": {
+            "deleted": "sticky message for this channel has been deleted.",
+            "noMessageExists": "no sticky messages exist for this channel."
         }
     }
 }

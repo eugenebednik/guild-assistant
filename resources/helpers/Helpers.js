@@ -37,20 +37,20 @@ function moveMessage(args, client, message) {
   const targetChannelMatches = XRegExp.matchRecursive(args[1], '<#', '>', 'g');
 
   if (targetChannelMatches.length) {
-    let targetChannel = client.channels.get(`${targetChannelMatches[0]}`);
+    const targetChannel = client.channels.get(`${targetChannelMatches[0]}`);
 
     if (targetChannel) {
       message.channel.fetchMessage(args[0]).then(async targetMessage => {
         await targetChannel.send(targetMessage.content);
-        if (targetMessage) targetMessage.delete();
+        if (targetMessage) await targetMessage.delete();
       });
     }
     else {
-      message.reply(i18n.commands.msgmove.channelNotFound);
+      message.reply(i18n.commands.messagemove.channelNotFound);
     }
   }
   else {
-    message.reply(i18n.commands.msgmove.channelNotFound);
+    message.reply(i18n.commands.messagemove.channelNotFound);
   }
 }
 

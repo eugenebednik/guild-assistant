@@ -48,8 +48,28 @@ class Database {
   }
 
   setChannelSticky(guildId, channelSnowflake, messageSnowflake, text, callback) {
-    const sql = `REPLACE INTO \`sticky_messages\` (channel_id, guild_id, channel_snowflake, message_snowflake, message )
-                VALUES ('${guildId}', '${channelSnowflake}', '${messageSnowflake}', '${text}');`;
+    const sql = `REPLACE INTO \`sticky_messages\` (guild_id, channel_snowflake, message_snowflake, message )
+                VALUES (${guildId}, '${channelSnowflake}', '${messageSnowflake}', '${text}');`;
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR:', err);
+        throw err;
+      }
+
+      if (result) {
+        callback(true);
+      }
+      else {
+        callback(false);
+      }
+    });
+  }
+
+  updateChannelSticky(stickyId, guildId, channelSnowflake, messageSnowflake, text, callback) {
+    const sql = `UPDATE \`sticky_messages\`
+                SET guild_id = ${guildId}, channel_snowflake = '${channelSnowflake}', message_snowflake = '${messageSnowflake}', message = '${text}'
+                WHERE id = ${stickyId};`;
 
     this.db.query(sql, (err, result) => {
       if (err) {
@@ -67,10 +87,10 @@ class Database {
   }
 
   getChannelSticky(guildId, channelSnowflake, callback) {
-    const sql = `SELECT messageSnowflake, message
+    const sql = `SELECT id, message_snowflake, message
                  FROM  \`sticky_messages\`
                  WHERE guild_id = ${guildId}
-                 AND channel_snowflake = ${channelSnowflake}
+                 AND channel_snowflake = '${channelSnowflake}'
                  LIMIT 1;`;
 
     this.db.query(sql, (err, result) => {
@@ -80,14 +100,26 @@ class Database {
       }
 
       if (result.length) {
-        callback({
-          snowlfake: result[0].snowlfake,
-          message: result[0].message,
-        });
+        callback(result[0]);
       }
       else {
         callback(null);
       }
+    });
+  }
+
+  deleteChannelSticky(guildId, channelSnowflake, callback) {
+    const sql = `DELETE FROM \`sticky_messages\`
+                WHERE guild_id = ${guildId}
+                AND channel_snowflake = '${channelSnowflake}';`;
+
+    this.db.query(sql, (err) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      callback();
     });
   }
 

@@ -66,9 +66,14 @@ client.on('messageReactionAdd', (messageReaction, user) => {
 });
 
 client.on('message', message => {
+  if (message.author.bot) return;
+
   db.getGuild(message.guild.id, message.guild.name, guildId => {
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
-    if (!prefixRegex.test(message.content)) return;
+    if (!prefixRegex.test(message.content)) {
+      sendAnyStickies(guildId, message);
+      return;
+    }
 
     const [, matchedPrefix] = message.content.match(prefixRegex);
     const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
@@ -214,9 +219,9 @@ client.on('message', message => {
         }
       });
       break;
-    case 'msgmove':
+    case 'messagemove':
       if (!args.length || (args.length && args.length !== 2)) {
-        message.reply(i18n.commands.msgmove.syntaxHelp);
+        message.reply(i18n.commands.messagemove.syntaxHelp);
         return;
       }
       else {
@@ -225,6 +230,11 @@ client.on('message', message => {
 
       break;
     case 'stick':
+      if (!message.member.hasPermission('ADMINISTRATOR')) {
+        message.reply(i18n.general.accessDenied);
+        return;
+      }
+
       if (args.length < 2 || (args.length === 1 && args[0].toLowerCase() === 'help')) {
         message.reply(i18n.commands.stick.syntaxHelp);
 
@@ -233,13 +243,75 @@ client.on('message', message => {
 
       sanitizedMessage = replaceMentions(client, args.join(' '), message.guild);
 
-      console.log(sanitizedMessage);
+      db.getChannelSticky(guildId, message.channel.id, result => {
+        if (!result) {
+          message.channel.send({
+            embed: {
+              color: 3447003,
+              author: {
+                name: message.author.username,
+                icon_url: message.author.avatarURL,
+              },
+
+              description: sanitizedMessage,
+            },
+          }).then(sent => {
+            db.setChannelSticky(guildId, message.channel.id, sent.id, sanitizedMessage, setResult => {
+              if (setResult) {
+                message.reply(i18n.commands.stick.success);
+              }
+            });
+          });
+        }
+        else {
+          message.reply(i18n.commands.stick.alreadyExists);
+        }
+      });
+      break;
+    case 'unstick':
+      if (!message.member.hasPermission('ADMINISTRATOR')) {
+        message.reply(i18n.general.accessDenied);
+        return;
+      }
+
+      db.getChannelSticky(guildId, message.channel.id, result => {
+        if (result) {
+          db.deleteChannelSticky(guildId, message.channel.id, () => message.reply(i18n.commands.unstick.deleted));
+        }
+        else {
+          message.reply(i18n.commands.unstick.noMessageExists);
+        }
+      });
       break;
     default:
+      sendAnyStickies(guildId, message);
       break;
     }
   });
 });
 
+function sendAnyStickies(guildId, message) {
+  db.getChannelSticky(guildId, message.channel.id, stickyMessage => {
+    if (stickyMessage) {
+      message.channel.fetchMessage(`${stickyMessage.message_snowflake}`).then(async targetMessage => {
+        await targetMessage.delete();
+        message.channel.send({
+          embed: {
+            color: 3447003,
+            author: {
+              name: message.author.username,
+              icon_url: message.author.avatarURL,
+            },
+            description: stickyMessage.message,
+          },
+        }).then(sentMsg => {
+          db.updateChannelSticky(stickyMessage.id, guildId, message.channel.id, sentMsg.id, stickyMessage.message, () => {
+            // do nothing
+          });
+        });
+      });
+    }
+  });
+}
 
 client.login(process.env.BOT_DISCORD_TOKEN);

@@ -73,8 +73,8 @@ class Broadcast {
                   },
                 },
               });
-              message.reply(i18n.commands.broadcast.sendSuccess);
             });
+            message.reply(i18n.commands.broadcast.sendSuccess);
           }
           else {
             message.reply(i18n.commands.broadcast.noChannelsSet);

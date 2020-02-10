@@ -48,12 +48,28 @@ class Database {
     });
   }
 
-  setChannelSticky(guildId, channelSnowflake, messageSnowflake, title, text, callback) {
+  setChannelSticky(guildId, channelSnowflake, messageSnowflake, title, text, createdBySnowflake, callback) {
     const now = new moment(moment.now());
     const dateTime = now.format('YYYY-MM-DD HH:mm:ss');
 
-    const sql = `REPLACE INTO \`sticky_messages\` (guild_id, channel_snowflake, message_snowflake, title, message, created_at)
-                VALUES (${guildId}, '${channelSnowflake}', '${messageSnowflake}', '${title}', '${text}', '${dateTime}');`;
+    const sql = `REPLACE INTO \`sticky_messages\` (
+                                  guild_id,
+                                  channel_snowflake,
+                                  message_snowflake,
+                                  title,
+                                  message,
+                                  created_by_snowflake,
+                                  created_at
+                                )
+                                VALUES (
+                                        ${guildId},
+                                        '${channelSnowflake}',
+                                        '${messageSnowflake}',
+                                        '${title}',
+                                        '${text}',
+                                        '${createdBySnowflake}',
+                                        '${dateTime}'
+                                      );`;
 
     this.db.query(sql, (err, result) => {
       if (err) {
@@ -99,7 +115,7 @@ class Database {
   }
 
   getChannelSticky(guildId, channelSnowflake, callback) {
-    const sql = `SELECT id, message_snowflake, title, message, created_at
+    const sql = `SELECT id, message_snowflake, title, message, created_by_snowflake, created_at
                  FROM  \`sticky_messages\`
                  WHERE guild_id = ${guildId}
                  AND channel_snowflake = '${channelSnowflake}'

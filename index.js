@@ -112,7 +112,7 @@ client.on('message', message => {
       moveMessage.handle(args, client, message);
       break;
     case 'stick':
-      stick.stick(guildId, args, message, client, args);
+      stick.stick(guildId, args, message, client);
       break;
     case 'unstick':
       stick.unstick(guildId, message);
@@ -121,7 +121,7 @@ client.on('message', message => {
       broadcast.handle(guildId, args, message);
       break;
     default:
-      stick.sendAnyStickies(guildId, message);
+      stick.sendAnyStickies(guildId, message, client);
       break;
     }
   });

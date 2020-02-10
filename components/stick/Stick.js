@@ -34,16 +34,17 @@ class Stick {
           return;
         }
 
-        const sanitizedTitle = replaceMentions(client, parts[0], message.guild);
-        const sanitizedMessage = replaceMentions(client, parts[1], message.guild);
+        const sanitizedTitle = replaceMentions(client, parts.shift(), message.guild);
+        const sanitizedMessage = replaceMentions(client, parts.join(' '), message.guild);
 
-        message.channel.send(this.getEmbed(message, sanitizedTitle, sanitizedMessage)).then(sent => {
+        message.channel.send(this.getEmbed(message, sanitizedTitle, sanitizedMessage, message.author)).then(sent => {
           this.db.setChannelSticky(
             guildId,
             message.channel.id,
             sent.id,
             sanitizedTitle,
             sanitizedMessage,
+            message.author.id,
             setResult => {
               if (setResult) {
                 message.reply(i18n.commands.stick.success);
@@ -73,14 +74,16 @@ class Stick {
     });
   }
 
-  sendAnyStickies(guildId, message) {
+  sendAnyStickies(guildId, message, client) {
     this.db.getChannelSticky(guildId, message.channel.id, stickyMessage => {
       if (stickyMessage) {
         message.channel.fetchMessage(`${stickyMessage.message_snowflake}`).then(async targetMessage => {
           await targetMessage.delete();
           const dateTime = new moment(stickyMessage.created_at).format('dddd, MMMM Do YYYY, HH:mm:ss');
+          let originalAuthor = (await message.guild.fetchMember(stickyMessage.created_by_snowflake)).user;
+          if (!originalAuthor) originalAuthor = client.user;
           message.channel
-            .send(this.getEmbed(message, stickyMessage.title, stickyMessage.message, dateTime))
+            .send(this.getEmbed(message, stickyMessage.title, stickyMessage.message, originalAuthor, dateTime))
             .then(sentMsg => {
               this.db.updateChannelSticky(
                 stickyMessage.id,
@@ -95,14 +98,14 @@ class Stick {
     });
   }
 
-  getEmbed(message, sanitizedTitle, sanitizedMessage, dateTime) {
+  getEmbed(message, sanitizedTitle, sanitizedMessage, originalAuthor, dateTime) {
     return {
       embed: {
         title: sanitizedTitle,
         color: 3447003,
         author: {
-          name: message.author.username,
-          icon_url: message.author.avatarURL,
+          name: originalAuthor.username,
+          icon_url: originalAuthor.avatarURL,
         },
 
         description: sanitizedMessage,

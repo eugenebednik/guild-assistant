@@ -71,10 +71,13 @@ CREATE TABLE `sticky_messages` (
   `message_snowflake` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_by_snowflake` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `unique_vals` (`channel_snowflake`,`guild_id`),
   KEY `guild_id` (`guild_id`),
+  KEY `message_snowlflake` (`message_snowflake`),
+  KEY `created_by_snowflake` (`created_by_snowflake`),
   CONSTRAINT `sticky_messages_ibfk_1` FOREIGN KEY (`guild_id`) REFERENCES `guilds` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

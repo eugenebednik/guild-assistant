@@ -58,7 +58,14 @@ class GoogleTranslate {
         }
       });
 
-      textToTranslate = replaceMentions(client, message.content, message.guild);
+      let text = message.content;
+
+      if (message.content.startsWith('>')) {
+        text = message.content.substr(1).trim();
+      }
+
+      textToTranslate = replaceMentions(client, text, message.guild);
+      console.log(textToTranslate);
       targetLanguage = languageDefinitions.find(lang => lang.code === countryLang);
     }
 

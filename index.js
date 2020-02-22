@@ -58,11 +58,8 @@ client.once('ready', () => {
   console.log('Ready!');
 });
 
-client.on('messageReactionAdd', (messageReaction, user) => {
-  if (user.bot) return;
+client.on('messageReactionAdd', (messageReaction) => {
   const { message, emoji } = messageReaction;
-
-  if (message.author.bot) return;
 
   const countryCode = code(emoji.name);
   if (countryCode) {
@@ -71,58 +68,67 @@ client.on('messageReactionAdd', (messageReaction, user) => {
 });
 
 client.on('message', message => {
-  if (message.author.bot) return;
-
   db.getGuild(message.guild.id, message.guild.name, guildId => {
+    // Bots cannot issue commands to the bot
+    if (message.author.bot) return;
+
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
-    if (!prefixRegex.test(message.content)) {
-      stick.sendAnyStickies(guildId, message);
-      return;
-    }
+    if (prefixRegex.test(message.content)) {
+      const [, matchedPrefix] = message.content.match(prefixRegex);
+      const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
+      const command = args.shift().toLowerCase();
 
-    const [, matchedPrefix] = message.content.match(prefixRegex);
-    const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
-    const command = args.shift().toLowerCase();
+      switch (command) {
+      case 'ping':
+        stick.sendAnyStickies(guildId, message, client);
+        message.channel.send('pong');
+        break;
+      case 'beep':
+        stick.sendAnyStickies(guildId, message, client);
+        message.channel.send('boop');
+        break;
+      case 'stats':
+        stick.sendAnyStickies(guildId, message, client);
+        if (!message.member.hasPermission('ADMINISTRATOR')) {
+          message.reply(i18n.general.accessDenied);
+          return;
+        }
 
-    switch (command) {
-    case 'ping':
-      message.channel.send('pong');
-      break;
-    case 'beep':
-      message.channel.send('boop');
-      break;
-    case 'stats':
-      if (!message.member.hasPermission('ADMINISTRATOR')) {
-        message.reply(i18n.general.accessDenied);
-        return;
+        message.channel.send(`Server count: ${client.guilds.size}`);
+        break;
+      case 't':
+        stick.sendAnyStickies(guildId, message, client);
+        googleTranslate.handle(args.shift(), message, client, true, args);
+        break;
+      case 'prefix':
+        stick.sendAnyStickies(guildId, message, client);
+        message.reply(i18n.commands.ping.message + `\`${prefix}\``);
+        break;
+      case 'servertime':
+        stick.sendAnyStickies(guildId, message, client);
+        servertime.handle(guildId, message, args);
+        break;
+      case 'movemessage':
+        stick.sendAnyStickies(guildId, message, client);
+        moveMessage.handle(args, client, message);
+        break;
+      case 'stick':
+        stick.stick(guildId, args, message, client);
+        break;
+      case 'unstick':
+        stick.unstick(guildId, message);
+        break;
+      case 'broadcast':
+        stick.sendAnyStickies(guildId, message, client);
+        broadcast.handle(guildId, args, message);
+        break;
+      default:
+        stick.sendAnyStickies(guildId, message, client);
+        break;
       }
-
-      message.channel.send(`Server count: ${client.guilds.size}`);
-      break;
-    case 't':
-      googleTranslate.handle(args.shift(), message, client, true, args);
-      break;
-    case 'prefix':
-      message.reply(i18n.commands.ping.message + `\`${prefix}\``);
-      break;
-    case 'servertime':
-      servertime.handle(guildId, message, args);
-      break;
-    case 'movemessage':
-      moveMessage.handle(args, client, message);
-      break;
-    case 'stick':
-      stick.stick(guildId, args, message, client);
-      break;
-    case 'unstick':
-      stick.unstick(guildId, message);
-      break;
-    case 'broadcast':
-      broadcast.handle(guildId, args, message);
-      break;
-    default:
+    }
+    else {
       stick.sendAnyStickies(guildId, message, client);
-      break;
     }
   });
 });

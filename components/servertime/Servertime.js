@@ -1,6 +1,5 @@
-const moment = require('moment');
-const unirest = require('unirest');
 const i18n = require('../../i18n.json');
+const { getWorldTimeZoneData } = require('../../resources/helpers/Helpers');
 
 class Servertime {
   constructor(logger, db, timezoneApiUrl) {
@@ -83,7 +82,7 @@ class Servertime {
         return;
       }
 
-      this.getWorldTimeZoneData(result, dateTime => {
+      getWorldTimeZoneData(this.timeZoneApiUrl, result, dateTime => {
         message.channel.send({
           embed: {
             color: 3447003,
@@ -100,20 +99,6 @@ class Servertime {
         });
       });
     });
-  }
-
-  getWorldTimeZoneData(offset, callback) {
-    try {
-      unirest.get(`${this.timeZoneApiUrl}/${offset}`).end(response => {
-        if (response.ok) {
-          callback(moment.parseZone(response.body.datetime).format('dddd, MMMM Do YYYY, HH:mm:ss'));
-        }
-      });
-    }
-    catch (err) {
-      this.logger.error('ERROR:', err);
-      throw err;
-    }
   }
 }
 

@@ -39,6 +39,8 @@
         "log4js": "^6.1.0",
         "moment": "^2.24.0",
         "mysql": "^2.17.1",
+        "node-cron": "^2.0.3",
+        "sugar-date": "^2.0.6",
         "unirest": "^0.6.0",
         "xregexp": "^4.2.4"
     }

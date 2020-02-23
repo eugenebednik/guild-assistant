@@ -5,6 +5,8 @@ const i18n = require('./i18n.json');
 const client = new Discord.Client();
 const prefix = process.env.BOT_PREFIX;
 const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const cron = require('node-cron');
+const moment = require('moment');
 
 const log4js = require('log4js');
 log4js.configure({
@@ -44,6 +46,8 @@ const MoveMessage = require('./components/movemessage/MoveMessage');
 const moveMessage = new MoveMessage();
 const Broadcast = require('./components/broadcast/Broadcast');
 const broadcast = new Broadcast(db);
+const Remind = require('./components/remind/Remind');
+const remind = new Remind(db);
 
 /**
  * Country emojis
@@ -56,6 +60,90 @@ client.on('guildCreate', guild => {
 
 client.once('ready', () => {
   console.log('Ready!');
+
+  const job = cron.schedule('00 * * * * *', () => {
+    console.log('Reminder cron is running.');
+
+    db.getAllGuilds(result => {
+      if (result) {
+        result.forEach(guild => {
+          const discordGuild = client.guilds.get(guild.snowflake);
+
+          if (discordGuild) {
+            console.log(`Processing guild ${discordGuild.id}`);
+            // Get guild reminders.
+            db.getGuildReminders(guild.id, reminders => {
+              if (reminders && reminders.length) {
+                console.log(`Found reminder tasks for guild ${discordGuild.id}`);
+
+                reminders.forEach(reminder => {
+                  const remindOn = moment(reminder.remind_on).utc().startOf('minute');
+                  const now = moment(moment.now()).utc();
+
+                  if (now.isSameOrAfter(remindOn)) {
+                    // We are good to go on notification
+                    console.log(`Processing entry: ${reminder.payload} for user ${reminder.created_by_snowflake}`);
+
+                    const json = JSON.parse(reminder.payload);
+                    const channels = [];
+                    let mentions = '';
+
+                    json.targets.forEach(target => {
+                      if (target.type === 'channel') {
+                        const channel = client.channels.get(target.id);
+
+                        if (channel) {
+                          channels.push(channel.id);
+                        }
+                      }
+
+                      if (target.type === 'user') {
+                        const user = discordGuild.members.get(target.id);
+                        if (user) {
+                          mentions += `<@!${user.id}> `;
+                        }
+                      }
+                      else if (target.type === 'role') {
+                        const role = discordGuild.roles.get(target.id);
+                        if (role) {
+                          mentions += `<@&${role.id}> `;
+                        }
+                      }
+                    });
+
+                    channels.forEach(channel => {
+                      const message = `${i18n.commands.remind.reminderPrefix} ${mentions.trim()} ${i18n.commands.remind.reminderSuffix} ${json.text}`;
+                      discordGuild.channels.get(channel).send(message).then(() => {
+                        // Modify recurring reminder
+                        if (reminder.recurring === 1) {
+                          const newDate = remindOn.add(reminder.recurring_interval, 'hours').format('YYYY-MM-DD HH:mm:ss');
+                          db.updateReminderDateTime(guild.id, reminder.created_by_snowflake, newDate, updated => {
+                            if (updated) {
+                              console.log(`Interval updated for reminder ID ${reminder.id}. New datetime: ${newDate}`);
+                            }
+                          });
+                        }
+                        else {
+                          db.deleteReminderById(reminder.id, () => {
+                            console.log(`Deleted reminder ID ${reminder.id} since it was not recurring`);
+                          });
+                        }
+                      });
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+
+  // Delete all reminders
+  db.deleteAllReminders(() => {
+    job.start();
+  });
 });
 
 client.on('messageReactionAdd', (messageReaction) => {
@@ -121,6 +209,14 @@ client.on('message', message => {
       case 'broadcast':
         stick.sendAnyStickies(guildId, message, client);
         broadcast.handle(guildId, args, message);
+        break;
+      case 'remind':
+        stick.sendAnyStickies(guildId, message, client);
+        remind.remind(guildId, args, message);
+        break;
+      case 'unremind':
+        stick.sendAnyStickies(guildId, message, client);
+        remind.unremind(guildId, args, message);
         break;
       default:
         stick.sendAnyStickies(guildId, message, client);

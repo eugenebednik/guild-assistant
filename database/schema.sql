@@ -1,4 +1,17 @@
-﻿/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+﻿# ************************************************************
+# Sequel Pro SQL dump
+# Version 4541
+#
+# http://www.sequelpro.com/
+# https://github.com/sequelpro/sequelpro
+#
+# Host: 192.168.10.10 (MySQL 5.7.27-0ubuntu0.18.04.1)
+# Database: guildassistant
+# Generation Time: 2020-02-23 09:04:40 +0000
+# ************************************************************
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
@@ -67,9 +80,9 @@ DROP TABLE IF EXISTS `reminders`;
 CREATE TABLE `reminders` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `guild_id` bigint(20) unsigned NOT NULL,
-  `channel_snowflake` varchar(18) NOT NULL DEFAULT '',
   `remind_on` datetime NOT NULL,
   `recurring` tinyint(1) NOT NULL DEFAULT '0',
+  `recurring_interval` int(11) DEFAULT NULL,
   `payload` text NOT NULL,
   `created_by_snowflake` varchar(18) NOT NULL DEFAULT '',
   `created_at` datetime NOT NULL,

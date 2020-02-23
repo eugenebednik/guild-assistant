@@ -8,6 +8,7 @@ class Database {
       user: dbUsername,
       password: dbPassword,
       database: dbDatabase,
+      timezone: 'utc',
     });
 
     this.db.connect(err => {
@@ -44,6 +45,24 @@ class Database {
       }
       else {
         callback(result[0].id);
+      }
+    });
+  }
+
+  getAllGuilds(callback) {
+    const sql = 'SELECT id, snowflake FROM guilds;';
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      if (result && result.length) {
+        callback(result);
+      }
+      else {
+        return null;
       }
     });
   }
@@ -248,6 +267,138 @@ class Database {
       }
 
       if (typeof callback === 'function') callback();
+    });
+  }
+
+  deleteRemindersForUser(guildId, authorSnowflake, callback) {
+    const sql = `DELETE FROM \`reminders\`
+                WHERE guild_id = ${guildId}
+                AND created_by_snowflake = ${authorSnowflake};`;
+
+    this.db.query(sql, (err) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      if (typeof callback === 'function') callback();
+    });
+  }
+
+  createReminder(guildId, authorSnowflake, dateTime, payload, recurring = false, recurringInterval = null, callback) {
+    const now = new moment(moment.now()).format('YYYY-MM-DD HH:mm:ss');
+    const isRecurring = recurring ? 1 : 0;
+
+    const sql = `REPLACE INTO \`reminders\`
+                (guild_id, remind_on, recurring, recurring_interval, payload, created_by_snowflake, created_at)
+                VALUES
+                (${guildId}, '${dateTime}', ${isRecurring}, ${recurringInterval}, '${payload}', '${authorSnowflake}', '${now}');`;
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      if (typeof callback === 'function') {
+        if (result) {
+          callback(true);
+        }
+        else {
+          callback(false);
+        }
+      }
+    });
+  }
+
+  updateReminderDateTime(guildId, authorSnowflake, dateTime, callback) {
+    const sql = `UPDATE \`reminders\`
+                SET remind_on = '${dateTime}'
+                WHERE guild_id = ${guildId}
+                AND created_by_snowflake = ${authorSnowflake};`;
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR:', err);
+        throw err;
+      }
+
+      if (typeof callback === 'function') {
+        if (result) {
+          callback(true);
+        }
+        else {
+          callback(false);
+        }
+      }
+    });
+  }
+
+  deleteReminderById(reminderId, callback) {
+    const sql = `DELETE FROM \`reminders\` WHERE id = ${reminderId};`;
+
+    this.db.query(sql, (err) => {
+      if (typeof callback === 'function') callback();
+
+      if (err) {
+        this.logger.error('ERROR:', err);
+        throw err;
+      }
+    });
+  }
+
+  deleteAllReminders(callback) {
+    const sql = 'DELETE FROM `reminders`';
+
+    this.db.query(sql, (err) => {
+      if (typeof callback === 'function') callback();
+
+      if (err) {
+        this.logger.error('ERROR:', err);
+        throw err;
+      }
+    });
+  }
+
+  userHasReminders(guildId, authorSnowflake, callback) {
+    const sql = `SELECT count(*) AS count
+                FROM \`reminders\`
+                WHERE guild_id = ${guildId}
+                AND created_by_snowflake = '${authorSnowflake}';`;
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      if (result.length) {
+        if (result[0].count > 0) {
+          callback(true);
+        }
+      }
+
+      callback(false);
+    });
+  }
+
+  getGuildReminders(guildId, callback) {
+    const sql = `SELECT id, remind_on, recurring, recurring_interval, payload, created_by_snowflake, created_at
+                FROM \`reminders\`
+                WHERE guild_id = ${guildId};`;
+
+    this.db.query(sql, (err, result) => {
+      if (err) {
+        this.logger.error('ERROR', err);
+        throw err;
+      }
+
+      if (result.length) {
+        callback(result);
+      }
+      else {
+        callback(null);
+      }
     });
   }
 }

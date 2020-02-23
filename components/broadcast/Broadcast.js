@@ -1,5 +1,5 @@
 const i18n = require('../../i18n.json');
-const moment = require('moment');
+const { Date } = require('sugar-date');
 
 /**
  * Helpers
@@ -54,8 +54,8 @@ class Broadcast {
             result.forEach(channelSnowflake => {
               const bcChannel = message.guild.channels.find(channel => channel.id === channelSnowflake.snowflake);
               const sanitizedMessage = replaceMentions(client, args.join(' '), message.guild);
-              const now = new moment(moment.now());
-              const dateTime = now.format('dddd, MMMM Do YYYY, HH:mm:ss');
+              const dateTime = new Date();
+              dateTime.fromUTC = true;
 
               bcChannel.send({
                 embed: {
@@ -69,7 +69,7 @@ class Broadcast {
                   description: sanitizedMessage,
 
                   footer: {
-                    text: `${i18n.commands.broadcast.broadcastOnLabel} ${dateTime}`,
+                    text: `${i18n.commands.broadcast.broadcastOnLabel} ${dateTime.full()}`,
                   },
                 },
               });

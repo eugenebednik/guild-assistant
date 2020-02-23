@@ -52,6 +52,20 @@
             "removeAllChannels": {
                 "success": "all broadcast channels have been removed from the database."
             }
+        },
+        "remind": {
+            "syntaxHelp": "the correct syntax is `remind set <date/time/human time> | <message> (@mentions supported) | <recurring> <interval in hours>`. The `<recurring>` field is optional. If you do not specify `<interval in hours>` with recurring, it will default to 1 hour. Example: `remind set In 24 minutes | I need to so something in #channel with @someone | recurring 2`.",
+            "deleted": "your reminder(s) have been deleted.",
+            "mustSetServerTimezone": "you must set server timezone first. Run `$servertime help` to find out how to do this.",
+            "invalidDateProvided": "you have provided an invalid date or time.",
+            "createdRecurring": "recurring reminder has been created.",
+            "createdNonRecurring": "non-recurring reminder has been created.",
+            "reminderPrefix": "Attention,",
+            "reminderSuffix": "it's time to"
+        },
+        "unremind": {
+            "removed": "all your reminder are now belong to us.",
+            "syntaxHelp": "unremind does not take any arguments. Go away."
         }
     }
 }

@@ -1,4 +1,5 @@
 const i18n = require('../../i18n.json');
+const { Date } = require('sugar-date');
 const moment = require('moment');
 
 /**
@@ -25,32 +26,33 @@ class Stick {
     this.db.getChannelSticky(guildId, message.channel.id, result => {
       if (!result) {
         const parts = args.join(' ').split('|');
-        parts.forEach(part => {
-          part.trim();
-        });
 
-        if ((!parts[0] || (parts[0] && parts[0] === '')) || (!parts[1] || (parts[0] && parts[0] === ''))) {
+        if ((!parts[0] || (parts[0] && parts[0].trim() === '')) || (!parts[1] || (parts[1] && parts[1].trim() === ''))) {
           message.reply(i18n.commands.stick.syntaxHelp);
           return;
         }
 
         const sanitizedTitle = replaceMentions(client, parts.shift(), message.guild);
         const sanitizedMessage = replaceMentions(client, parts.join(' '), message.guild);
+        const now = new moment(moment.now());
+        const dateTime = now.format('YYYY-MM-DD HH:mm:ss');
 
-        message.channel.send(this.getEmbed(message, sanitizedTitle, sanitizedMessage, message.author)).then(sent => {
-          this.db.setChannelSticky(
-            guildId,
-            message.channel.id,
-            sent.id,
-            sanitizedTitle,
-            sanitizedMessage,
-            message.author.id,
-            setResult => {
-              if (setResult) {
-                message.reply(i18n.commands.stick.success);
-              }
-            });
-        });
+        message.channel.send(
+          this.getEmbed(message, sanitizedTitle, sanitizedMessage, message.author, new Date(dateTime).long()))
+          .then(sent => {
+            this.db.setChannelSticky(
+              guildId,
+              message.channel.id,
+              sent.id,
+              sanitizedTitle,
+              sanitizedMessage,
+              message.author.id,
+              setResult => {
+                if (setResult) {
+                  message.reply(i18n.commands.stick.success);
+                }
+              });
+          });
       }
       else {
         message.reply(i18n.commands.stick.alreadyExists);
@@ -79,9 +81,9 @@ class Stick {
       if (stickyMessage) {
         message.channel.fetchMessage(`${stickyMessage.message_snowflake}`).then(async targetMessage => {
           await targetMessage.delete();
-          const dateTime = new moment(stickyMessage.created_at).format('dddd, MMMM Do YYYY, HH:mm:ss');
           let originalAuthor = (await message.guild.fetchMember(stickyMessage.created_by_snowflake)).user;
           if (!originalAuthor) originalAuthor = client.user;
+          const dateTime = new Date(stickyMessage.created_at, { fromUTC: true }).long();
           message.channel
             .send(this.getEmbed(message, stickyMessage.title, stickyMessage.message, originalAuthor, dateTime))
             .then(sentMsg => {

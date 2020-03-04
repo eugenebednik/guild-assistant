@@ -85,7 +85,7 @@ class Database {
                                         '${channelSnowflake}',
                                         '${messageSnowflake}',
                                         '${title}',
-                                        '${text}',
+                                        '${text.replace(/[\u0800-\uFFFF]/g, '')}',
                                         '${createdBySnowflake}',
                                         '${dateTime}'
                                       );`;
@@ -113,7 +113,7 @@ class Database {
                     channel_snowflake = '${channelSnowflake}',
                     message_snowflake = '${messageSnowflake}',
                     title = '${title}',
-                    message = '${text}'
+                    message = '${text.replace(/[\u0800-\uFFFF]/g, '')}'
                 WHERE id = ${stickyId};`;
 
     this.db.query(sql, (err, result) => {
@@ -292,7 +292,7 @@ class Database {
     const sql = `REPLACE INTO \`reminders\`
                 (guild_id, remind_on, recurring, recurring_interval, payload, created_by_snowflake, created_at)
                 VALUES
-                (${guildId}, '${dateTime}', ${isRecurring}, ${recurringInterval}, '${payload}', '${authorSnowflake}', '${now}');`;
+                (${guildId}, '${dateTime}', ${isRecurring}, ${recurringInterval}, '${payload.replace(/[\u0800-\uFFFF]/g, '')}', '${authorSnowflake}', '${now}');`;
 
     this.db.query(sql, (err, result) => {
       if (err) {

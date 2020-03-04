@@ -85,7 +85,7 @@ class Database {
                                         '${channelSnowflake}',
                                         '${messageSnowflake}',
                                         '${title}',
-                                        '${text}',
+                                        '${text.replace(/[\u0800-\uFFFF]/g, '')}',
                                         '${createdBySnowflake}',
                                         '${dateTime}'
                                       );`;
@@ -113,7 +113,7 @@ class Database {
                     channel_snowflake = '${channelSnowflake}',
                     message_snowflake = '${messageSnowflake}',
                     title = '${title}',
-                    message = '${text}'
+                    message = '${text.replace(/[\u0800-\uFFFF]/g, '')}'
                 WHERE id = ${stickyId};`;
 
     this.db.query(sql, (err, result) => {
@@ -292,8 +292,7 @@ class Database {
     const sql = `REPLACE INTO \`reminders\`
                 (guild_id, remind_on, recurring, recurring_interval, payload, created_by_snowflake, created_at)
                 VALUES
-                (${guildId}, '${dateTime}', ${isRecurring}, ${recurringInterval}, '${payload}', '${authorSnowflake}', '${now}');`;
-
+                (${guildId}, '${dateTime}', ${isRecurring}, ${recurringInterval}, '${payload.replace(/[\u0800-\uFFFF]/g, '')}', '${authorSnowflake}', '${now}');`;
     this.db.query(sql, (err, result) => {
       if (err) {
         this.logger.error('ERROR', err);
@@ -348,7 +347,7 @@ class Database {
   }
 
   deleteAllReminders(callback) {
-    const sql = 'DELETE FROM `reminders`';
+    const sql = 'TRUNCATE table `reminders`';
 
     this.db.query(sql, (err) => {
       if (typeof callback === 'function') callback();
@@ -357,28 +356,6 @@ class Database {
         this.logger.error('ERROR:', err);
         throw err;
       }
-    });
-  }
-
-  userHasReminders(guildId, authorSnowflake, callback) {
-    const sql = `SELECT count(*) AS count
-                FROM \`reminders\`
-                WHERE guild_id = ${guildId}
-                AND created_by_snowflake = '${authorSnowflake}';`;
-
-    this.db.query(sql, (err, result) => {
-      if (err) {
-        this.logger.error('ERROR', err);
-        throw err;
-      }
-
-      if (result.length) {
-        if (result[0].count > 0) {
-          callback(true);
-        }
-      }
-
-      callback(false);
     });
   }
 

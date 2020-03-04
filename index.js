@@ -54,6 +54,21 @@ const remind = new Remind(db);
  */
 const { code } = require('country-emoji');
 
+/**
+ * Prototype extensions
+ * @returns {string}
+ */
+String.prototype.escapeSpecialChars = function() {
+  return this.replace(/\\n/g, '\\n')
+    .replace(/\\'/g, "\\'")
+    .replace(/\\"/g, '\\"')
+    .replace(/\\&/g, '\\&')
+    .replace(/\\r/g, '\\r')
+    .replace(/\\t/g, '\\t')
+    .replace(/\\b/g, '\\b')
+    .replace(/\\f/g, '\\f');
+};
+
 client.on('guildCreate', guild => {
   console.log(`Joined a new guild: ${guild.name}`);
 });
@@ -111,8 +126,11 @@ client.once('ready', () => {
                       }
                     });
 
+                    // Convert from base64 back to string.
+                    const formattedText = Buffer.from(json.text, 'base64').toString('ascii');
+
                     channels.forEach(channel => {
-                      const message = `${i18n.commands.remind.reminderPrefix} ${mentions.trim()} ${i18n.commands.remind.reminderSuffix} ${json.text}`;
+                      const message = `${i18n.commands.remind.reminderPrefix} ${mentions.trim()} ${i18n.commands.remind.reminderSuffix} ${formattedText}`;
                       discordGuild.channels.get(channel).send(message).then(() => {
                         // Modify recurring reminder
                         if (reminder.recurring === 1) {

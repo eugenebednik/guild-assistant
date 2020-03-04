@@ -1,6 +1,6 @@
 {
     "name": "guild-assistant",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "description": "A Discord bot with a variety of functions aimed at easing your daily grind. Aimed to be the one-stop shop for gamers and their guilds.",
     "main": "index.js",
     "scripts": {
@@ -14,14 +14,18 @@
     },
     "keywords": [
         "bot",
-        "game",
-        "mmo",
         "guild",
         "discord",
         "translation",
         "timers",
         "time converstion",
-        "i18n"
+        "i18n",
+        "reminder",
+        "reminders",
+        "sticky",
+        "sticky messages",
+        "guildassistant",
+        "servertime"
     ],
     "author": "Eugene Bednik & Victoria Bogdanova",
     "license": "MIT",

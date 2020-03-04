@@ -85,11 +85,11 @@ class Remind {
           }
         }
 
-        // Encode the payload!
+        // Encode the payload in base64 format to preserve any breaks and special chars!
         payload = JSON.stringify({
-          text: joinedMessage,
+          text: Buffer.from(joinedMessage).toString('base64'),
           targets: targets,
-        });
+        }).escapeSpecialChars();
 
         momentConverted = new moment(date).utc().startOf('minute');
         dateTime = momentConverted.format('YYYY-MM-DD HH:mm:ss');

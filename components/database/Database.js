@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const moment = require('moment');
 
 class Database {
-  constructor(dbHost, dbUsername, dbPassword, dbDatabase, logger) {
+  constructor(dbHost, dbUsername, dbPassword, dbDatabase) {
     this.db = mysql.createConnection({
       host: dbHost,
       user: dbUsername,
@@ -13,13 +13,10 @@ class Database {
 
     this.db.connect(err => {
       if (err) {
-        logger.error('ERROR:', err);
         throw err;
       }
       console.log('Connected to the database.');
     });
-
-    this.logger = logger;
   }
 
   getGuild(snowflake, guildName, callback) {
@@ -36,7 +33,6 @@ class Database {
 
         this.db.query(sql, (err, newResult) => {
           if (err) {
-            this.logger.error('ERROR:', err);
             throw err;
           }
 
@@ -54,7 +50,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR', err);
         throw err;
       }
 
@@ -85,14 +80,13 @@ class Database {
                                         '${channelSnowflake}',
                                         '${messageSnowflake}',
                                         '${title}',
-                                        '${text.replace(/[\u0800-\uFFFF]/g, '')}',
+                                        '${text}',
                                         '${createdBySnowflake}',
                                         '${dateTime}'
                                       );`;
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -113,12 +107,11 @@ class Database {
                     channel_snowflake = '${channelSnowflake}',
                     message_snowflake = '${messageSnowflake}',
                     title = '${title}',
-                    message = '${text.replace(/[\u0800-\uFFFF]/g, '')}'
+                    message = '${text}'
                 WHERE id = ${stickyId};`;
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -142,7 +135,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -162,7 +154,6 @@ class Database {
 
     this.db.query(sql, (err) => {
       if (err) {
-        this.logger.error('ERROR', err);
         throw err;
       }
 
@@ -175,7 +166,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -193,7 +183,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -211,7 +200,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -229,7 +217,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -249,7 +236,6 @@ class Database {
 
     this.db.query(sql, (err) => {
       if (err) {
-        this.logger.error('ERROR', err);
         throw err;
       }
 
@@ -262,7 +248,6 @@ class Database {
 
     this.db.query(sql, (err) => {
       if (err) {
-        this.logger.error('ERROR', err);
         throw err;
       }
 
@@ -277,7 +262,6 @@ class Database {
 
     this.db.query(sql, (err) => {
       if (err) {
-        this.logger.error('ERROR', err);
         throw err;
       }
 
@@ -292,10 +276,9 @@ class Database {
     const sql = `REPLACE INTO \`reminders\`
                 (guild_id, remind_on, recurring, recurring_interval, payload, created_by_snowflake, created_at)
                 VALUES
-                (${guildId}, '${dateTime}', ${isRecurring}, ${recurringInterval}, '${payload.replace(/[\u0800-\uFFFF]/g, '')}', '${authorSnowflake}', '${now}');`;
+                (${guildId}, '${dateTime}', ${isRecurring}, ${recurringInterval}, '${payload}', '${authorSnowflake}', '${now}');`;
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR', err);
         throw err;
       }
 
@@ -318,7 +301,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
 
@@ -340,7 +322,6 @@ class Database {
       if (typeof callback === 'function') callback();
 
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
     });
@@ -353,7 +334,6 @@ class Database {
       if (typeof callback === 'function') callback();
 
       if (err) {
-        this.logger.error('ERROR:', err);
         throw err;
       }
     });
@@ -366,7 +346,6 @@ class Database {
 
     this.db.query(sql, (err, result) => {
       if (err) {
-        this.logger.error('ERROR', err);
         throw err;
       }
 

@@ -2,8 +2,7 @@ const i18n = require('../../i18n.json');
 const { getWorldTimeZoneData } = require('../../resources/helpers/Helpers');
 
 class Servertime {
-  constructor(logger, db, timezoneApiUrl) {
-    this.logger = logger;
+  constructor(db, timezoneApiUrl) {
     this.db = db;
     this.timeZoneApiUrl = timezoneApiUrl;
   }

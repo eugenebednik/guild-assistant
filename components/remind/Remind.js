@@ -87,7 +87,7 @@ class Remind {
 
         // Encode the payload in base64 format to preserve any breaks and special chars!
         payload = JSON.stringify({
-          text: Buffer.from(joinedMessage).toString('base64'),
+          text: Buffer.from(joinedMessage, 'utf8').toString('base64'),
           targets: targets,
         }).escapeSpecialChars();
 

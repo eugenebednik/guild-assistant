@@ -30,7 +30,6 @@ const db = new Database(
   process.env.DB_USERNAME,
   process.env.DB_PASSWORD,
   process.env.DB_DATABASE,
-  logger,
 );
 
 /**
@@ -39,7 +38,7 @@ const db = new Database(
 const GoogleTranslate = require('./components/google-translate/GoogleTranslate');
 const googleTranslate = new GoogleTranslate(process.env.GOOGLE_TRANSLATE_API_KEY, logger);
 const Servertime = require('./components/servertime/Servertime');
-const servertime = new Servertime(logger, db, process.env.TIMEZONE_API_URL);
+const servertime = new Servertime(db, process.env.TIMEZONE_API_URL);
 const Stick = require('./components/stick/Stick');
 const stick = new Stick(db);
 const MoveMessage = require('./components/movemessage/MoveMessage');
@@ -127,7 +126,7 @@ client.once('ready', () => {
                     });
 
                     // Convert from base64 back to string.
-                    const formattedText = Buffer.from(json.text, 'base64').toString('ascii');
+                    const formattedText = Buffer.from(json.text, 'base64').toString('utf8');
 
                     channels.forEach(channel => {
                       const message = `${i18n.commands.remind.reminderPrefix} ${mentions.trim()} ${i18n.commands.remind.reminderSuffix} ${formattedText}`;
